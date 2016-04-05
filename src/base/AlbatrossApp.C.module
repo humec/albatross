@@ -1,0 +1,52 @@
+#include "AlbatrossApp.h"
+#include "Moose.h"
+#include "AppFactory.h"
+#include "MooseSyntax.h"
+
+template<>
+InputParameters validParams<AlbatrossApp>()
+{
+  InputParameters params = validParams<MooseApp>();
+
+  params.set<bool>("use_legacy_uo_initialization") = false;
+  params.set<bool>("use_legacy_uo_aux_computation") = false;
+  params.set<bool>("use_legacy_output_syntax") = false;
+
+  return params;
+}
+
+AlbatrossApp::AlbatrossApp(InputParameters parameters) :
+    MooseApp(name, parameters)
+{
+  Moose::registerObjects(_factory);
+  AlbatrossApp::registerObjects(_factory);
+
+  Moose::associateSyntax(_syntax, _action_factory);
+  AlbatrossApp::associateSyntax(_syntax, _action_factory);
+}
+
+AlbatrossApp::~AlbatrossApp()
+{
+}
+
+// External entry point for dynamic application loading
+extern "C" void AlbatrossApp__registerApps() { AlbatrossApp::registerApps(); }
+void
+AlbatrossApp::registerApps()
+{
+  registerApp(AlbatrossApp);
+}
+
+// External entry point for dynamic object registration
+extern "C" void AlbatrossApp__registerObjects(Factory & factory) { AlbatrossApp::registerObjects(factory); }
+void
+AlbatrossApp::registerObjects(Factory & factory)
+{
+}
+
+// External entry point for dynamic syntax association
+extern "C" void AlbatrossApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory) { AlbatrossApp::associateSyntax(syntax, action_factory); }
+void
+AlbatrossApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+{
+}
